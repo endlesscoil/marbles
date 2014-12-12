@@ -1,0 +1,22 @@
+{
+    project: {
+        name: '%READABLE_NAME%',
+        version: '0.0.1',
+        author: 'endlesscoil',
+
+        app: {
+            name: '%APP_NAME%',
+            package: 'org.digression.%APP_NAME%'
+        },
+
+        build: {
+            dependencies: {
+                luxe: '*'
+            }
+        },
+
+        files: {
+            assets: 'assets/'
+        }
+    }
+}
