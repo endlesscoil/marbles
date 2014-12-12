@@ -15,7 +15,7 @@ def update_project(app_name, readable_name):
         f.write(data)
 
 def update_git(path):
-    subprocess.call(['git', 'remote', 'rm', 'origin'])
+    subprocess.call(['git', 'remote', 'rename', 'origin', 'template'])
     subprocess.call(['git', 'remote', 'add', 'origin', path])
 
 def main():
