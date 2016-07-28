@@ -11,7 +11,8 @@
 
         build: {
             dependencies: {
-                luxe: '*'
+                luxe: '*',
+                mint: '*'
             }
         },
 
