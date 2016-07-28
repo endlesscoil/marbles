@@ -2,6 +2,10 @@ import luxe.Input;
 
 class Main extends luxe.Game
 {
+    public override function config(config : luxe.AppConfig) {
+        return config;
+    }
+
     public override function ready() : Void
     {
         init_graphics();
