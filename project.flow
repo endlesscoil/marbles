@@ -1,12 +1,12 @@
 {
     project: {
-        name: '%READABLE_NAME%',
+        name: 'marbles',
         version: '0.0.1',
         author: 'endlesscoil',
 
         app: {
-            name: '%APP_NAME%',
-            package: 'org.digression.%APP_NAME%'
+            name: 'marbles',
+            package: 'org.digression.marbles'
         },
 
         build: {
