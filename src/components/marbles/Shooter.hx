@@ -21,7 +21,7 @@ class Shooter extends Component {
         marble = cast entity;
 
         marble.radius *= 2;
-        marble.collider.body.gravMass *= 2;
+        marble.collider.body.gravMass *= 0.5;
         marble.collider.body.shapes.clear();
         marble.collider.body.shapes.add(new Circle(marble.radius));
 
@@ -39,9 +39,8 @@ class Shooter extends Component {
 
     public function shoot(target_pos : Vector) {
         var direction = get_direction(target_pos);
-        var vel = direction.multiplyScalar(50);
+        var vel = direction.multiplyScalar(500);
 
-        // do stuff with nape
         marble.collider.body.velocity = new Vec2(vel.x, vel.y);
     }
 

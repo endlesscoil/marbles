@@ -14,6 +14,7 @@ import ui.UI;
 class GameState extends State {
     private var canvas : Canvas;
 
+    private var board : Board;
     private var marbles : Array<Marble> = new Array<Marble>();
 
     private var shooter : Marble;
@@ -25,6 +26,8 @@ class GameState extends State {
         Luxe.renderer.clear_color.rgb(0x0E7496);  // blue sky
 
         current_mouse_pos = new Vector(0, 0);
+
+        board = new Board();
 
         for (i in 0...13) {
             marbles.push(new Marble({
@@ -47,7 +50,7 @@ class GameState extends State {
     }
 
     public override function update(dt : Float) {
-
+        shooter.get('shooter').aim(current_mouse_pos);
     }
 
     public override function onkeyup(e : luxe.Input.KeyEvent) {
@@ -57,8 +60,6 @@ class GameState extends State {
     }
 
     public override function onmousemove(event : luxe.Input.MouseEvent) {
-        shooter.get('shooter').aim(event.pos);
-
         current_mouse_pos = event.pos.clone();
     }
 }

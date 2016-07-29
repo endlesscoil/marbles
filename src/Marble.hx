@@ -12,6 +12,7 @@ import phoenix.geometry.CircleGeometry;
 import nape.phys.Body;
 import nape.phys.BodyType;
 import nape.shape.Circle;
+import nape.phys.Material;
 
 import util.Macros.*;
 
@@ -51,11 +52,6 @@ class Marble extends Entity {
             color: color
         });
 
-/*        body = new Body(BodyType.DYNAMIC);
-        body.shapes.add(new Circle(radius));
-        body.position.setxy(pos.x, pos.y);
-        body.space = Luxe.physics.nape.space;*/
-
         collider = add(new CircleCollider({
             name: 'body',
             x: pos.x,
@@ -63,9 +59,13 @@ class Marble extends Entity {
             r: radius,
             body_type: BodyType.DYNAMIC
         }));
-        //body.space = Luxe.physics.nape.space;
+
         collider.body.gravMass = mass;
-        collider.body.isBullet = true;
+        var material = Material.glass();
+        //material.rollingFriction = 1000;
+        collider.body.setShapeMaterials(material);
+        //collider.body.isBullet = true;
+
         Main.debug_draw.add(collider.body);
     }
 

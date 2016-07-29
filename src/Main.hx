@@ -20,7 +20,7 @@ class Main extends luxe.Game
     }
 
     public override function config(config : luxe.GameConfig) {
-        config.render.antialiasing = 2;
+        config.render.antialiasing = 4;
 
         return config;
     }
