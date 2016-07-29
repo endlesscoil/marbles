@@ -28,12 +28,14 @@ class Shooter extends Component {
 
     }
 
-    public function shoot(direction : Vector) {
+    public function shoot(target_pos : Vector) {
+        var direction = get_direction(target_pos);
 
+        // do stuff with nape
     }
 
     public function aim(target_pos : Vector) {
-        var aim_pos = Vector.Subtract(target_pos, pos).normalize().multiplyScalar(marble.radius + 10);
+        var aim_pos = get_direction(target_pos).multiplyScalar(marble.radius + 10);
 
         if (aim_geometry != null) aim_geometry.drop(true);
 
@@ -43,5 +45,9 @@ class Shooter extends Component {
             r: 5,
             color: new Color(1, 0, 0, 1)
         });
+    }
+
+    private function get_direction(target_pos : Vector) {
+        return Vector.Subtract(target_pos, pos).normalize();
     }
 }

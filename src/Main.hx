@@ -3,10 +3,14 @@ import luxe.States;
 
 import ui.UI;
 
+import luxe.physics.nape.DebugDraw;
+
 class Main extends luxe.Game 
 {
     public static var ui : UI;
     public static var state : States;
+
+    public static var debug_draw : DebugDraw;
 
     public static function set_state(state_name : String) {
         trace('Changing state to: ${state_name}');
@@ -22,6 +26,8 @@ class Main extends luxe.Game
     }
 
     public override function ready() {
+        Luxe.physics.nape.space.gravity = new nape.geom.Vec2(0, 0);
+
         init_graphics();
         init_states();
         init_input();
@@ -41,9 +47,15 @@ class Main extends luxe.Game
     }
 
     private function init_graphics() {
+        Luxe.renderer.batcher.on(prerender, function(_) { Luxe.renderer.state.lineWidth(2); });
+        Luxe.renderer.batcher.on(postrender, function(_) { Luxe.renderer.state.lineWidth(1); });
+
         // Create batchers for static landscape elements and UI.
         GameState.staticBatcher = Luxe.renderer.create_batcher({ name: 'static batcher', layer: 0 });
         GameState.uiBatcher = Luxe.renderer.create_batcher({ name: 'ui batcher', layer: 99 });
+
+        debug_draw = new DebugDraw();
+        Luxe.physics.nape.debugdraw = debug_draw;
 
         // Initialize UI
         ui = new UI();
