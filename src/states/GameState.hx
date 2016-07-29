@@ -1,5 +1,6 @@
 package states;
 
+import luxe.Input;
 import luxe.Color;
 import luxe.Vector;
 import luxe.States;
@@ -16,11 +17,14 @@ class GameState extends State {
     private var marbles : Array<Marble> = new Array<Marble>();
 
     private var shooter : Marble;
+    private var current_mouse_pos : Vector;
 
     public override function onenter<T>(_ : T) {
         canvas = UI.canvas;
 
         Luxe.renderer.clear_color.rgb(0x0E7496);  // blue sky
+
+        current_mouse_pos = new Vector(0, 0);
 
         for (i in 0...13) {
             marbles.push(new Marble({
@@ -47,10 +51,14 @@ class GameState extends State {
     }
 
     public override function onkeyup(e : luxe.Input.KeyEvent) {
-        Main.set_state('game_over');
+        //Main.set_state('game_over');
+        if (e.keycode == Key.space)
+            shooter.get('shooter').shoot(current_mouse_pos);
     }
 
     public override function onmousemove(event : luxe.Input.MouseEvent) {
         shooter.get('shooter').aim(event.pos);
+
+        current_mouse_pos = event.pos.clone();
     }
 }

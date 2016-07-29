@@ -7,7 +7,12 @@ import luxe.utils.Maths;
 
 import phoenix.geometry.CircleGeometry;
 
+import nape.geom.Vec2;
+import nape.shape.Circle;
+
 class Shooter extends Component {
+    public var mass : Float = 0;
+
     private var marble : Marble;
 
     private var aim_geometry : CircleGeometry = null;
@@ -16,6 +21,10 @@ class Shooter extends Component {
         marble = cast entity;
 
         marble.radius *= 2;
+        marble.collider.body.gravMass *= 2;
+        marble.collider.body.shapes.clear();
+        marble.collider.body.shapes.add(new Circle(marble.radius));
+
         marble.geometry = Luxe.draw.circle({
             x: pos.x,
             y: pos.y,
@@ -30,8 +39,10 @@ class Shooter extends Component {
 
     public function shoot(target_pos : Vector) {
         var direction = get_direction(target_pos);
+        var vel = direction.multiplyScalar(50);
 
         // do stuff with nape
+        marble.collider.body.velocity = new Vec2(vel.x, vel.y);
     }
 
     public function aim(target_pos : Vector) {

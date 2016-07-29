@@ -18,8 +18,9 @@ import util.Macros.*;
 typedef MarbleOptions = {
 //    > SpriteOptions,
     > EntityOptions,
-    ? color: Color,
-    ? radius: Float
+    ? color : Color,
+    ? radius : Float,
+    ? mass : Float
 }
 
 class Marble extends Entity {
@@ -27,12 +28,17 @@ class Marble extends Entity {
     public var radius(default, default) : Float = 5;
     public var geometry(default, default) : CircleGeometry;
 
+    public var mass(default, default) : Float = 0;
+
+    public var collider(default, default) : CircleCollider;
+
     //private var body : Body;
 
     public override function new(?options : MarbleOptions) {
         options = def(options, {});
         radius = def(options.radius, radius);
         color = def(options.color, color);
+        mass = def(options.mass, mass);
 
         super(options);
     }
@@ -50,7 +56,7 @@ class Marble extends Entity {
         body.position.setxy(pos.x, pos.y);
         body.space = Luxe.physics.nape.space;*/
 
-        var collider = add(new CircleCollider({
+        collider = add(new CircleCollider({
             name: 'body',
             x: pos.x,
             y: pos.y,
@@ -58,6 +64,8 @@ class Marble extends Entity {
             body_type: BodyType.DYNAMIC
         }));
         //body.space = Luxe.physics.nape.space;
+        collider.body.gravMass = mass;
+        collider.body.isBullet = true;
         Main.debug_draw.add(collider.body);
     }
 
