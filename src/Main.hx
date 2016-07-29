@@ -27,6 +27,7 @@ class Main extends luxe.Game
 
     public override function ready() {
         Luxe.physics.nape.space.gravity = new nape.geom.Vec2(0, 0);
+        Luxe.physics.nape.space.worldLinearDrag = 0.5;
 
         init_graphics();
         init_states();

@@ -39,7 +39,7 @@ class Shooter extends Component {
 
     public function shoot(target_pos : Vector) {
         var direction = get_direction(target_pos);
-        var vel = direction.multiplyScalar(500);
+        var vel = direction.multiplyScalar(300);
 
         marble.collider.body.velocity = new Vec2(vel.x, vel.y);
     }
