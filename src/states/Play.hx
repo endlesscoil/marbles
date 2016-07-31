@@ -22,13 +22,21 @@ class Play extends State {
     private var current_mouse_pos : Vector;
     private var launch_down_time : Float = -1;
 
+    private var _txt_instructions : Label;
+    private var txt_instructions : mint.render.luxe.Label;
+
     public override function onenter<T>(_ : T) {
         canvas = UI.canvas;
+        create_ui();
 
         Luxe.renderer.clear_color.rgb(0x0E7496);  // blue sky
 
         current_mouse_pos = new Vector(0, 0);
         launch_down_time = -1;
+
+        Luxe.events.listen('input_state_changed', on_input_state_changed);
+
+        GameState.set_input_state(InputState.ChooseLaunchPosition);
 
         board = new Board();
 
@@ -105,12 +113,18 @@ class Play extends State {
 
                     //shooter.collider.body.position.setxy(e.pos.x, e.pos.y);
 
-                    GameState.inputState = InputState.LaunchMarble;
+                    GameState.set_input_state(InputState.LaunchMarble);
                 }
             }
 
             default: {}
         }
+    }
+
+    private function on_input_state_changed(e : Dynamic) {
+        trace('got input state change: ${e.previous_state} -> ${e.new_state}');
+
+        inputstate_to_directions(e.new_state);
     }
 
     private function create_shooter(pos : Vector, radius : Int) {
@@ -123,5 +137,35 @@ class Play extends State {
             pos: pos.clone()
         });
         shooter.add(new components.marbles.Shooter({ name: 'shooter' }));
+    }
+
+    private function create_ui() {
+        _txt_instructions = new Label({
+            parent: UI.canvas,
+            name: 'text.instructions',
+            x: Luxe.screen.w / 2,
+            y: Luxe.screen.h - 30,
+            align: TextAlign.center,
+            align_vertical: TextAlign.center,
+            text_size: 14,
+            text: '',
+            options: {
+                color: new Color(1, 1, 1, 1)
+            }
+        });
+
+        txt_instructions = new mint.render.luxe.Label(UI.rendering, _txt_instructions);
+    }
+
+    private function inputstate_to_directions(state : InputState) {
+        switch (state) {
+            case InputState.Idle: set_instruction_text('derp de derp de derp');
+            case InputState.ChooseLaunchPosition: set_instruction_text("Click the mouse button where you'd like to launch the shooter from.");
+            case InputState.LaunchMarble: set_instruction_text('Press and hold the space bar to charge your launch and then release it to shoot the marble!');
+        }
+    }
+
+    private function set_instruction_text(text : String) {
+        txt_instructions.text.text = '${text}';
     }
 }
