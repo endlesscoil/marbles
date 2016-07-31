@@ -39,13 +39,6 @@ class Play extends State {
                 pos: new Vector(Luxe.utils.random.float(0, Luxe.screen.w), Luxe.utils.random.float(0, Luxe.screen.h))
             }));
         }
-
-        shooter = new Marble({
-            radius: 10,
-            color: new Color(1, 1, 1, 1),
-            pos: new Vector(Luxe.screen.w / 2, Luxe.screen.h / 2)
-        });
-        shooter.add(new components.marbles.Shooter({ name: 'shooter' }));
     }
 
     public override function onleave<T>(_ : T) {
@@ -53,7 +46,7 @@ class Play extends State {
     }
 
     public override function update(dt : Float) {
-        if (shooter.destroyed != true)
+        if (GameState.inputState == InputState.LaunchMarble && shooter != null && shooter.destroyed != true)
             shooter.get('shooter').aim(current_mouse_pos);
     }
 
@@ -99,10 +92,14 @@ class Play extends State {
             case InputState.ChooseLaunchPosition:
             {
                 if (e.button == luxe.MouseButton.left) {
-                    shooter.collider.body.position.setxy(e.pos.x, e.pos.y);
                     //shooter.pos = e.pos.clone();
 
-                    trace('Setting shooter pos to: ${shooter.pos}');
+
+                    create_shooter(e.pos, 10);
+
+                    trace('Created shooter at pos: ${shooter.pos}');
+
+                    //shooter.collider.body.position.setxy(e.pos.x, e.pos.y);
 
                     GameState.inputState = InputState.LaunchMarble;
                 }
@@ -110,5 +107,17 @@ class Play extends State {
 
             default: {}
         }
+    }
+
+    private function create_shooter(pos : Vector, radius : Int) {
+        if (shooter != null)
+            shooter.destroy();
+
+        shooter = new Marble({
+            radius: radius,
+            color: new Color(1, 1, 1, 1),
+            pos: pos.clone()
+        });
+        shooter.add(new components.marbles.Shooter({ name: 'shooter' }));
     }
 }
