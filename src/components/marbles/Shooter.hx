@@ -12,18 +12,26 @@ import nape.shape.Circle;
 
 class Shooter extends Component {
     public var mass : Float = 0;
+    public var power : Float = 0;
 
     private var marble : Marble;
-
     private var aim_geometry : CircleGeometry = null;
 
     public override function init() {
         marble = cast entity;
 
+        // TEMP
+        power = 500;
+        
+        Main.debug_draw.remove(marble.collider.body);
         marble.radius *= 2;
         marble.collider.body.gravMass *= 0.5;
         marble.collider.body.shapes.clear();
         marble.collider.body.shapes.add(new Circle(marble.radius));
+        Main.debug_draw.remove(marble.collider.body);
+
+        if (marble.geometry != null)
+            marble.geometry.drop(true);
 
         marble.geometry = Luxe.draw.circle({
             x: pos.x,
@@ -41,9 +49,9 @@ class Shooter extends Component {
 
     }
 
-    public function shoot(target_pos : Vector) {
+    public function shoot(target_pos : Vector, launch_power : Float) {
         var direction = get_direction(target_pos);
-        var vel = direction.multiplyScalar(300);
+        var vel = direction.multiplyScalar(launch_power);
 
         marble.collider.body.velocity = new Vec2(vel.x, vel.y);
     }

@@ -48,6 +48,7 @@ class Board extends Entity {
 
         trace('on_border_collision: ${obj}');
 
-        obj.destroy();
+        if (obj.get('shooter') == null)
+            obj.destroy();
     }
 }

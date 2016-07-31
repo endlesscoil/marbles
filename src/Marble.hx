@@ -3,6 +3,7 @@ package;
 import luxe.Color;
 import luxe.Entity;
 import luxe.Sprite;
+import luxe.Vector;
 //import luxe.options.SpriteOptions;
 import luxe.options.EntityOptions;
 import luxe.components.physics.nape.CircleCollider;
@@ -32,6 +33,7 @@ class Marble extends Entity {
     public var mass(default, default) : Float = 0;
 
     public var collider(default, default) : CircleCollider;
+    //public var pos(set_pos, get_pos) : Vector;
 
     //private var body : Body;
 
@@ -79,5 +81,20 @@ class Marble extends Entity {
 
     public override function update(dt : Float) {
         geometry.set(pos.x, pos.y, radius, radius, 60, 0, 0);
+    }
+
+    public override function set_pos(new_pos : Vector) : phoenix.Vector {
+        if(collider != null) {
+            trace('setting collider pos');
+            collider.body.position.setxy(new_pos.x, new_pos.y);
+        }
+
+        if (geometry != null) {
+            geometry.set(pos.x, pos.y, radius, radius, 60, 0, 0);
+        }
+
+        pos.set_xy(new_pos.x, new_pos.y);
+
+        return pos;
     }
 }

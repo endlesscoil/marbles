@@ -2,6 +2,7 @@ import luxe.Input;
 import luxe.States;
 
 import ui.UI;
+import GameState.InputState;
 
 import luxe.physics.nape.DebugDraw;
 
@@ -28,6 +29,8 @@ class Main extends luxe.Game
     public override function ready() {
         Luxe.physics.nape.space.gravity = new nape.geom.Vec2(0, 0);
         Luxe.physics.nape.space.worldLinearDrag = 0.5;
+
+        GameState.inputState = InputState.ChooseLaunchPosition;  // TEMP
 
         init_graphics();
         init_states();
@@ -66,7 +69,7 @@ class Main extends luxe.Game
     private function init_states() {
         state = new luxe.States();
         state.add(new states.Title({ name: 'title_screen' }));
-        state.add(new states.GameState({ name: 'game' }));
+        state.add(new states.Play({ name: 'play' }));
         state.add(new states.GameOver({ name: 'game_over' }));
 
         set_state('title_screen');

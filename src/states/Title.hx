@@ -33,7 +33,7 @@ class Title extends State {
     }
 
     public override function onkeyup(e : luxe.Input.KeyEvent) {
-        Main.set_state('game');
+        Main.set_state('play');
     }
 
     private function create_ui() {
