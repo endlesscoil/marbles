@@ -46,7 +46,7 @@ class Play extends State {
     }
 
     public override function update(dt : Float) {
-        if (GameState.inputState == InputState.LaunchMarble && shooter != null && shooter.destroyed != true)
+        if (GameState.inputState == InputState.LaunchMarble && shooter != null && shooter.destroyed != true && shooter.get('shooter').aiming_enabled == true)
             shooter.get('shooter').aim(current_mouse_pos);
     }
 
@@ -76,6 +76,9 @@ class Play extends State {
 
                     shooter.get('shooter').shoot(current_mouse_pos, launch_power);
                     launch_down_time = -1;
+
+                    shooter.get('shooter').aiming_enabled = false;
+                    shooter.get('shooter').aim(null);
                 }
             }
 
@@ -96,6 +99,7 @@ class Play extends State {
 
 
                     create_shooter(e.pos, 10);
+                    shooter.get('shooter').aiming_enabled = true;
 
                     trace('Created shooter at pos: ${shooter.pos}');
 

@@ -13,6 +13,7 @@ import nape.shape.Circle;
 class Shooter extends Component {
     public var mass : Float = 0;
     public var power : Float = 0;
+    public var aiming_enabled : Bool = false;
 
     private var marble : Marble;
     private var aim_geometry : CircleGeometry = null;
@@ -56,17 +57,25 @@ class Shooter extends Component {
         marble.collider.body.velocity = new Vec2(vel.x, vel.y);
     }
 
-    public function aim(target_pos : Vector) {
-        var aim_pos = get_direction(target_pos).multiplyScalar(marble.radius + 10);
+    public function aim(?target_pos : Vector) {
+        if (target_pos == null) {
+            aim_geometry.drop(true);
+            aim_geometry = null;
+        }
+        else {
+            var aim_pos = get_direction(target_pos).multiplyScalar(marble.radius + 10);
 
-        if (aim_geometry != null) aim_geometry.drop(true);
-
-        aim_geometry = Luxe.draw.circle({
-            x: pos.x + aim_pos.x,
-            y: pos.y + aim_pos.y,
-            r: 5,
-            color: new Color(1, 0, 0, 1)
-        });
+            if (aim_geometry == null) {
+                aim_geometry = Luxe.draw.circle({
+                    x: pos.x + aim_pos.x,
+                    y: pos.y + aim_pos.y,
+                    r: 5,                                           // FIXME: hardcoded radius
+                    color: new Color(1, 0, 0, 1)
+                });
+            }
+            else
+                aim_geometry.set(pos.x + aim_pos.x, pos.y + aim_pos.y, 5, 5, 60, 0, 0);     // FIXME: hardcoded radius
+        }   
     }
 
     private function get_direction(target_pos : Vector) {
