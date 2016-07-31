@@ -44,6 +44,12 @@ class Marble extends Entity {
         super(options);
     }
 
+    public override function destroy(?_from_parent : Bool = false) {
+        geometry.drop(true);
+
+        super.destroy(_from_parent);
+    }
+
     public override function init() {
         geometry = Luxe.draw.circle({
             x: pos.x,
@@ -65,6 +71,8 @@ class Marble extends Entity {
         //material.rollingFriction = 1000;
         collider.body.setShapeMaterials(material);
         //collider.body.isBullet = true;
+
+        collider.body.userData.obj = this;
 
         Main.debug_draw.add(collider.body);
     }

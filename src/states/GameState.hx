@@ -50,11 +50,11 @@ class GameState extends State {
     }
 
     public override function update(dt : Float) {
-        shooter.get('shooter').aim(current_mouse_pos);
+        if (shooter.destroyed != true)
+            shooter.get('shooter').aim(current_mouse_pos);
     }
 
     public override function onkeyup(e : luxe.Input.KeyEvent) {
-        //Main.set_state('game_over');
         if (e.keycode == Key.space)
             shooter.get('shooter').shoot(current_mouse_pos);
     }

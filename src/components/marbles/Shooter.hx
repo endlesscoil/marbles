@@ -33,6 +33,10 @@ class Shooter extends Component {
         });
     }
 
+    public override function onremoved() {
+        trace('SHOOTER REMOVED!');
+    }
+
     public override function update(dt : Float) {
 
     }
