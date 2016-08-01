@@ -48,7 +48,9 @@ class Board extends Entity {
 
         trace('on_border_collision: ${obj}');
 
-        if (obj.get('shooter') == null)
+        if (obj.get('shooter') == null) {
             obj.destroy();
+            Luxe.events.fire('marble_captured');
+        }
     }
 }

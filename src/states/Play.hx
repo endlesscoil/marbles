@@ -8,6 +8,7 @@ import luxe.States;
 import mint.types.Types;
 import mint.Label;
 import mint.Canvas;
+import mint.Image;
 
 import ui.UI;
 import GameState.InputState;
@@ -22,9 +23,13 @@ class Play extends State {
     private var current_mouse_pos : Vector;
     private var launch_down_time : Float = -1;
     private var launch_timeout_timer : snow.api.Timer;
+    private var captured_marbles : Int = 0;
 
     private var _txt_instructions : Label;
     private var txt_instructions : mint.render.luxe.Label;
+    private var _txt_marble_count : Label;
+    private var txt_marble_count : mint.render.luxe.Label;
+    private var _img_marble_count : Image;
 
     public override function onenter<T>(_ : T) {
         canvas = UI.canvas;
@@ -34,8 +39,10 @@ class Play extends State {
 
         current_mouse_pos = new Vector(0, 0);
         launch_down_time = -1;
+        captured_marbles = 0;
 
         Luxe.events.listen('input_state_changed', on_input_state_changed);
+        Luxe.events.listen('marble_captured', on_marble_captured);
 
         GameState.set_input_state(InputState.ChooseLaunchPosition);
 
@@ -137,6 +144,12 @@ class Play extends State {
         GameState.set_input_state(InputState.ChooseLaunchPosition);
     }
 
+    private function on_marble_captured(e : Dynamic) {
+        trace('marble captured');
+
+        capture_marble();
+    }
+
     private function create_shooter(pos : Vector, radius : Int) {
         if (shooter != null)
             shooter.destroy();
@@ -165,6 +178,33 @@ class Play extends State {
         });
 
         txt_instructions = new mint.render.luxe.Label(UI.rendering, _txt_instructions);
+
+        _img_marble_count = new Image({
+            x: Luxe.screen.w - 30 - 20 - 5,
+            y: 5,
+            w: 30,
+            h: 30,
+            name: 'image.marble_count',
+            parent: UI.canvas,
+            path: 'assets/marble_count.png'
+        });
+
+        _txt_marble_count = new Label({
+            parent: UI.canvas,
+            name: 'text.marble_count',
+            x: Luxe.screen.w - 20 - 5,
+            y: 5,
+            align: TextAlign.left,
+            align_vertical: TextAlign.center,
+            text_size: 16,
+            text: '',
+            options: {
+                color: new Color(1, 1, 1, 1)
+            }
+        });
+
+        txt_marble_count = new mint.render.luxe.Label(UI.rendering, _txt_marble_count);
+        txt_marble_count.text.text = 'x0';
     }
 
     private function inputstate_to_directions(state : InputState) {
@@ -177,5 +217,11 @@ class Play extends State {
 
     private function set_instruction_text(text : String) {
         txt_instructions.text.text = '${text}';
+    }
+
+    private function capture_marble() {
+        captured_marbles++;
+
+        txt_marble_count.text.text = 'x${captured_marbles}';
     }
 }
