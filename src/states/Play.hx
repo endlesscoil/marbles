@@ -21,6 +21,7 @@ class Play extends State {
     private var shooter : Marble;
     private var current_mouse_pos : Vector;
     private var launch_down_time : Float = -1;
+    private var launch_timeout_timer : snow.api.Timer;
 
     private var _txt_instructions : Label;
     private var txt_instructions : mint.render.luxe.Label;
@@ -50,7 +51,7 @@ class Play extends State {
     }
 
     public override function onleave<T>(_ : T) {
-
+        Luxe.timer.reset();
     }
 
     public override function update(dt : Float) {
@@ -87,6 +88,8 @@ class Play extends State {
 
                     shooter.get('shooter').aiming_enabled = false;
                     shooter.get('shooter').aim(null);
+
+                    launch_timeout_timer = Luxe.timer.schedule(5, on_launch_timeout);
                 }
             }
 
@@ -125,6 +128,13 @@ class Play extends State {
         trace('got input state change: ${e.previous_state} -> ${e.new_state}');
 
         inputstate_to_directions(e.new_state);
+    }
+
+    private function on_launch_timeout() {
+        shooter.destroy();
+        shooter = null;
+
+        GameState.set_input_state(InputState.ChooseLaunchPosition);
     }
 
     private function create_shooter(pos : Vector, radius : Int) {
