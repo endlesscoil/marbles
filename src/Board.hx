@@ -12,6 +12,8 @@ import nape.callbacks.CbEvent;
 import nape.callbacks.InteractionType;
 
 class Board extends Entity {
+    public var marbles : Array<Marble> = new Array<Marble>();
+
     public var border : Body;
     private var border_collision_listener : InteractionListener;
 

@@ -17,8 +17,6 @@ class Play extends State {
     private var canvas : Canvas;
 
     private var board : Board;
-    private var marbles : Array<Marble> = new Array<Marble>();
-
     private var shooter : Marble;
     private var current_mouse_pos : Vector;
     private var launch_down_time : Float = -1;
@@ -49,10 +47,10 @@ class Play extends State {
         board = new Board();
 
         for (i in 0...13) {
-            marbles.push(new Marble({
+            board.marbles.push(new Marble({
                 radius: 10,
                 color: new Color(Luxe.utils.random.float(0, 1), Luxe.utils.random.float(0, 1), Luxe.utils.random.float(0, 1), 1),
-                pos: new Vector(Luxe.utils.random.float(0, Luxe.screen.w), Luxe.utils.random.float(0, Luxe.screen.h))
+                pos: new Vector(Luxe.utils.random.float(5, Luxe.screen.w), Luxe.utils.random.float(5, Luxe.screen.h))
             }));
         }
     }
@@ -73,6 +71,7 @@ class Play extends State {
                 if (launch_down_time == -1) {
                     trace('building up power: ${e.timestamp}');
                     launch_down_time = e.timestamp;
+                    shooter.get('shooter').powerup();
                 }
             }
 
@@ -93,6 +92,7 @@ class Play extends State {
                     shooter.get('shooter').shoot(current_mouse_pos, launch_power);
                     launch_down_time = -1;
 
+                    shooter.get('shooter').powerup(false);
                     shooter.get('shooter').aiming_enabled = false;
                     shooter.get('shooter').aim(null);
 

@@ -4,6 +4,8 @@ import luxe.Vector;
 import luxe.Component;
 import luxe.Color;
 import luxe.utils.Maths;
+import luxe.tween.Actuate;
+import luxe.tween.actuators.GenericActuator;
 
 import phoenix.geometry.CircleGeometry;
 
@@ -17,6 +19,7 @@ class Shooter extends Component {
 
     private var marble : Marble;
     private var aim_geometry : CircleGeometry = null;
+    private var powerup_actuator : IGenericActuator;
 
     public override function init() {
         marble = cast entity;
@@ -29,7 +32,7 @@ class Shooter extends Component {
         marble.collider.body.gravMass *= 0.5;
         marble.collider.body.shapes.clear();
         marble.collider.body.shapes.add(new Circle(marble.radius));
-        Main.debug_draw.remove(marble.collider.body);
+        Main.debug_draw.add(marble.collider.body);
 
         if (marble.geometry != null)
             marble.geometry.drop(true);
@@ -80,5 +83,14 @@ class Shooter extends Component {
 
     private function get_direction(target_pos : Vector) {
         return Vector.Subtract(target_pos, pos).normalize();
+    }
+
+    public function powerup(?v : Bool = true) {
+        if (v) {
+            powerup_actuator = Actuate.tween(aim_geometry.color, 0.50, { r: 0.1 }).reflect().repeat();
+        }
+        else {
+            Actuate.stop(powerup_actuator);
+        }
     }
 }
