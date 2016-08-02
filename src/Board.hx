@@ -93,18 +93,35 @@ class Board extends Entity {
         Main.debug_draw.add(circle_body);
     }
 
+    public function place_marbles(number : Int) {
+        for (i in 0...number) {
+            var x_pos = Luxe.utils.random.float(0 + Constants.PLAYABLE_X_OFFSETS[0], Luxe.screen.w + Constants.PLAYABLE_X_OFFSETS[1]);
+            var y_pos = Luxe.utils.random.float(0 + Constants.PLAYABLE_Y_OFFSETS[0], Luxe.screen.h + Constants.PLAYABLE_Y_OFFSETS[1]);
+            var p = Luxe.utils.geometry.random_point_in_unit_circle();
+            p.multiplyScalar(200);      // HACK: hardcoded circle radius.
+            p.x += Luxe.screen.w / 2;
+            p.y += Luxe.screen.h / 2;
+
+            marbles.push(new Marble({
+                radius: 5,
+                color: new luxe.Color(Luxe.utils.random.float(0, 1), Luxe.utils.random.float(0, 1), Luxe.utils.random.float(0, 1), 1),
+                pos: p.clone()
+            }));
+        }
+    }
+
     private function on_border_collision(collision : InteractionCallback) {
         var obj : luxe.Entity = collision.int2.userData.obj;
-
         trace('on_border_collision: ${obj}');
+    }
+
+    private function on_circle_sensor(collision : InteractionCallback) {
+        var obj : luxe.Entity = collision.int2.userData.obj;
+        trace('circle sensor: ${obj}');
 
         if (obj.get('shooter') == null) {
             obj.destroy();
             Luxe.events.fire('border_collision');
         }
-    }
-
-    private function on_circle_sensor(collision : InteractionCallback) {
-        trace('sensor fired!');
     }
 }

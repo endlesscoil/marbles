@@ -50,17 +50,7 @@ class Play extends State {
         GameState.set_input_state(InputState.ChooseLaunchPosition);
 
         board = new Board();
-
-        for (i in 0...13) {
-            var x_pos = Luxe.utils.random.float(0 + Constants.PLAYABLE_X_OFFSETS[0], Luxe.screen.w + Constants.PLAYABLE_X_OFFSETS[1]);
-            var y_pos = Luxe.utils.random.float(0 + Constants.PLAYABLE_Y_OFFSETS[0], Luxe.screen.h + Constants.PLAYABLE_Y_OFFSETS[1]);
-
-            board.marbles.push(new Marble({
-                radius: 5,
-                color: new Color(Luxe.utils.random.float(0, 1), Luxe.utils.random.float(0, 1), Luxe.utils.random.float(0, 1), 1),
-                pos: new Vector(x_pos, y_pos)
-            }));
-        }
+        board.place_marbles(13);
     }
 
     public override function onleave<T>(_ : T) {
