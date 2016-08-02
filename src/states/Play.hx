@@ -83,7 +83,7 @@ class Play extends State {
             {
                 if (e.keycode == Key.space) {
                     var charge_time = (e.timestamp - launch_down_time);
-                    var launch_power = Math.min(charge_time * shooter.get('shooter').power, 250);
+                    var launch_power = Math.min(charge_time * shooter.get('shooter').power, shooter.get('shooter').power);
 
                     trace('launching!  charge_time=${charge_time}, launch_power=${launch_power}');
 
