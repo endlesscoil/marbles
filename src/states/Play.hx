@@ -66,10 +66,12 @@ class Play extends State {
         switch (GameState.inputState) {
             case InputState.LaunchMarble:
             {
-                if (launch_down_time == -1) {
-                    trace('building up power: ${e.timestamp}');
-                    launch_down_time = e.timestamp;
-                    shooter.get('shooter').powerup();
+                if (e.keycode == Key.space) {
+                    if (launch_down_time == -1) {
+                        trace('building up power: ${e.timestamp}');
+                        launch_down_time = e.timestamp;
+                        shooter.get('shooter').powerup();
+                    }
                 }
             }
 
@@ -86,13 +88,13 @@ class Play extends State {
                     var launch_power = Math.min(charge_time * shooter.get('shooter').power, shooter.get('shooter').power);
 
                     trace('launching!  charge_time=${charge_time}, launch_power=${launch_power}');
-
-                    shooter.get('shooter').shoot(current_mouse_pos, launch_power);
                     launch_down_time = -1;
 
                     shooter.get('shooter').powerup(false);
                     shooter.get('shooter').aiming_enabled = false;
                     shooter.get('shooter').aim(null);
+
+                    shooter.get('shooter').shoot(current_mouse_pos, launch_power);
 
                     launch_timeout_timer = Luxe.timer.schedule(5, on_launch_timeout);
                 }
