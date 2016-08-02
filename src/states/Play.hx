@@ -103,6 +103,7 @@ class Play extends State {
     }
 
     public override function onmousemove(e : luxe.Input.MouseEvent) {
+        //trace('pos=${e.pos}, rel=${e.x_rel},${e.y_rel}');
         current_mouse_pos = e.pos.clone();
     }
 
@@ -112,8 +113,9 @@ class Play extends State {
             {
                 if (e.button == luxe.MouseButton.left) {
                     if (board.check_launch_point(e.pos))
-                        trace('NO WAY JOSE!');
+                        set_instruction_text('Choose a location outside of the circle!', new Color(1, 0, 0, 1));
                     else {
+                        Luxe.screen.cursor.grab = false;  // TODO: make false when not debugging, true otherwise
                         create_shooter(e.pos, 10);
                         shooter.get('shooter').aiming_enabled = true;
 
@@ -137,6 +139,7 @@ class Play extends State {
     private function on_launch_timeout() {
         shooter.destroy();
         shooter = null;
+        Luxe.screen.cursor.grab = false;
 
         var playerTurn = if (GameState.turnState == TurnState.Player1) TurnState.Player2 else TurnState.Player1;
 
@@ -262,14 +265,16 @@ class Play extends State {
 
     private function inputstate_to_directions(state : InputState) {
         switch (state) {
-            case InputState.Idle: set_instruction_text('derp de derp de derp');
-            case InputState.ChooseLaunchPosition: set_instruction_text("Click the mouse button where you'd like to launch the shooter from.");
-            case InputState.LaunchMarble: set_instruction_text('Press and hold the space bar to charge your launch and then release it to shoot the marble!');
+            case InputState.Idle: set_instruction_text('derp de derp de derp', new Color(1, 1, 1, 1));
+            case InputState.ChooseLaunchPosition: set_instruction_text("Click the mouse button where you'd like to launch the shooter from.", new Color(1, 1, 1, 1));
+            case InputState.LaunchMarble: set_instruction_text('Press and hold the space bar to charge your launch and then release it to shoot the marble!', new Color(1, 1, 1, 1));
         }
     }
 
-    private function set_instruction_text(text : String) {
+    private function set_instruction_text(text : String, ?color : Color) {
         txt_instructions.text.text = '${text}';
+        if (color != null)
+            txt_instructions.text.color = color;
     }
 
     private function capture_marble() {

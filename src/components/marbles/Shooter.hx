@@ -62,8 +62,10 @@ class Shooter extends Component {
 
     public function aim(?target_pos : Vector) {
         if (target_pos == null) {
-            aim_geometry.drop(true);
-            aim_geometry = null;
+            if (aim_geometry != null) {
+                aim_geometry.drop(true);
+                aim_geometry = null;
+            }
         }
         else {
             var aim_pos = get_direction(target_pos).multiplyScalar(marble.radius + 10);
@@ -72,7 +74,7 @@ class Shooter extends Component {
                 aim_geometry = Luxe.draw.circle({
                     x: pos.x + aim_pos.x,
                     y: pos.y + aim_pos.y,
-                    r: 5,                                           // FIXME: hardcoded radius
+                    r: 2.5,                                           // FIXME: hardcoded radius
                     color: new Color(1, 1, 1, 1)
                 });
             }
@@ -87,6 +89,9 @@ class Shooter extends Component {
 
     public function powerup(?v : Bool = true) {
         if (v) {
+            if (aim_geometry == null)
+                return;
+
             powerup_actuator = Actuate.tween(aim_geometry.color, 0.75, { g: 0.1, b: 0.1 }).reflect().repeat();
         }
         else {
