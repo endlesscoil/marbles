@@ -72,6 +72,7 @@ class Marble extends Entity {
         var material = Material.glass();
         //material.rollingFriction = 1000;
         collider.body.setShapeMaterials(material);
+        collider.body.setShapeFilters(new nape.dynamics.InteractionFilter(-1, -1, 1, -1, -1, -1));
         //collider.body.isBullet = true;
 
         collider.body.userData.obj = this;
