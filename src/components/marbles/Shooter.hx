@@ -73,7 +73,7 @@ class Shooter extends Component {
                     x: pos.x + aim_pos.x,
                     y: pos.y + aim_pos.y,
                     r: 5,                                           // FIXME: hardcoded radius
-                    color: new Color(1, 0, 0, 1)
+                    color: new Color(1, 1, 1, 1)
                 });
             }
             else
@@ -87,7 +87,7 @@ class Shooter extends Component {
 
     public function powerup(?v : Bool = true) {
         if (v) {
-            powerup_actuator = Actuate.tween(aim_geometry.color, 0.50, { r: 0.1 }).reflect().repeat();
+            powerup_actuator = Actuate.tween(aim_geometry.color, 0.75, { g: 0.1, b: 0.1 }).reflect().repeat();
         }
         else {
             Actuate.stop(powerup_actuator);
