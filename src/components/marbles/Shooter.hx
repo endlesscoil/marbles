@@ -68,7 +68,7 @@ class Shooter extends Component {
             }
         }
         else {
-            var aim_pos = get_direction(target_pos).multiplyScalar(marble.radius + 10);
+            var aim_pos = get_direction(target_pos).multiplyScalar(marble.radius + 5);
 
             if (aim_geometry == null) {
                 aim_geometry = Luxe.draw.circle({
