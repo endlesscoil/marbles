@@ -25,7 +25,7 @@ class Shooter extends Component {
         marble = cast entity;
 
         // TEMP
-        power = 500;
+        power = 250;
         
         Main.debug_draw.remove(marble.collider.body);
         //marble.radius *= 2;
@@ -57,7 +57,9 @@ class Shooter extends Component {
         var direction = get_direction(target_pos);
         var vel = direction.multiplyScalar(launch_power);
 
-        marble.collider.body.velocity = new Vec2(vel.x, vel.y);
+        marble.collider.body.applyImpulse(new Vec2(vel.x, vel.y));
+        //marble.collider.body.velocity = new Vec2(vel.x, vel.y);
+        //marble.collider.body.angularVel = 10.0;
     }
 
     public function aim(?target_pos : Vector) {
