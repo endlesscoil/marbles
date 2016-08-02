@@ -35,10 +35,14 @@ class Board extends Entity {
     private function create_borders() {
         border = new Body(BodyType.STATIC);
 
-        border.shapes.add(new Polygon(Polygon.rect(0, 0, Luxe.screen.w, -1)));
-        border.shapes.add(new Polygon(Polygon.rect(0, Luxe.screen.h, Luxe.screen.w, 1)));
-        border.shapes.add(new Polygon(Polygon.rect(0, 0, -1, Luxe.screen.h)));
-        border.shapes.add(new Polygon(Polygon.rect(Luxe.screen.w, 0, 1, Luxe.screen.h)));
+        var pax = Constants.PLAYABLE_X_OFFSETS;
+        var pay = Constants.PLAYABLE_Y_OFFSETS;
+
+        border.shapes.add(new Polygon(Polygon.rect(pax[0], pay[0], Luxe.screen.w + pax[1], -1)));
+        border.shapes.add(new Polygon(Polygon.rect(pax[0], Luxe.screen.h + pay[1], Luxe.screen.w + pax[1], 1)));
+        border.shapes.add(new Polygon(Polygon.rect(pax[0], pay[0], -1, Luxe.screen.h + pay[1])));
+        border.shapes.add(new Polygon(Polygon.rect(Luxe.screen.w + pax[1], pay[0], 1, Luxe.screen.h + pay[1])));
+
         border.space = Luxe.physics.nape.space;
         border.cbTypes.add(wallCollisionType);
 

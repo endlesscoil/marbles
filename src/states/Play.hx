@@ -9,6 +9,7 @@ import mint.types.Types;
 import mint.Label;
 import mint.Canvas;
 import mint.Image;
+import mint.Panel;
 
 import ui.UI;
 import GameState.InputState;
@@ -23,6 +24,8 @@ class Play extends State {
     private var launch_down_time : Float = -1;
     private var launch_timeout_timer : snow.api.Timer;
 
+    private var panel_top : Panel;
+    private var panel_bottom : Panel;
     private var _txt_instructions : Label;
     private var txt_instructions : mint.render.luxe.Label;
     private var _txt_marble_count1 : Label;
@@ -49,10 +52,13 @@ class Play extends State {
         board = new Board();
 
         for (i in 0...13) {
+            var x_pos = Luxe.utils.random.float(0 + Constants.PLAYABLE_X_OFFSETS[0], Luxe.screen.w + Constants.PLAYABLE_X_OFFSETS[1]);
+            var y_pos = Luxe.utils.random.float(0 + Constants.PLAYABLE_Y_OFFSETS[0], Luxe.screen.h + Constants.PLAYABLE_Y_OFFSETS[1]);
+
             board.marbles.push(new Marble({
                 radius: 10,
                 color: new Color(Luxe.utils.random.float(0, 1), Luxe.utils.random.float(0, 1), Luxe.utils.random.float(0, 1), 1),
-                pos: new Vector(Luxe.utils.random.float(5, Luxe.screen.w), Luxe.utils.random.float(5, Luxe.screen.h))
+                pos: new Vector(x_pos, y_pos)
             }));
         }
     }
@@ -169,18 +175,43 @@ class Play extends State {
     }
 
     private function create_ui() {
-        _txt_instructions = new Label({
+        panel_top = new Panel({
             parent: UI.canvas,
+            name: 'panel.top',
+            x: 0,
+            y: 0,
+            w: Luxe.screen.w,
+            h: 30 + 5 + 5,
+            options: {
+                color: new Color(0, 0, 0, 0.5)
+            }
+        });
+
+        panel_bottom = new Panel({
+            parent: UI.canvas,
+            name: 'panel.bottom',
+            x: 0,
+            y: Luxe.screen.h - 30,
+            w: Luxe.screen.w,
+            h: 30,
+            options: {
+                color: new Color(0, 0, 0, 0.5)
+            }
+        });
+
+        _txt_instructions = new Label({
+            parent: panel_bottom,
             name: 'text.instructions',
             x: Luxe.screen.w / 2,
-            y: Luxe.screen.h - 30,
+            y: 0,
             align: TextAlign.center,
             align_vertical: TextAlign.center,
             text_size: 14,
             text: '',
             options: {
                 color: new Color(1, 1, 1, 1)
-            }
+            },
+            depth: 99  // HACK: this shouldn't be needed, but seems it is.
         });
 
         txt_instructions = new mint.render.luxe.Label(UI.rendering, _txt_instructions);
@@ -191,12 +222,12 @@ class Play extends State {
             w: 30,
             h: 30,
             name: 'image.marble_count',
-            parent: UI.canvas,
+            parent: panel_top,
             path: 'assets/marble_count.png'
         });
 
         _txt_marble_count1 = new Label({
-            parent: UI.canvas,
+            parent: panel_top,
             name: 'text.marble_count',
             x: 5 + 30,
             y: 5,
@@ -218,12 +249,12 @@ class Play extends State {
             w: 30,
             h: 30,
             name: 'image.marble_count',
-            parent: UI.canvas,
+            parent: panel_top,
             path: 'assets/marble_count.png'
         });
 
         _txt_marble_count2 = new Label({
-            parent: UI.canvas,
+            parent: panel_top,
             name: 'text.marble_count',
             x: Luxe.screen.w - 20 - 5,
             y: 5,
