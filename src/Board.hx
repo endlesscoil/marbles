@@ -52,7 +52,7 @@ class Board extends Entity {
 
         if (obj.get('shooter') == null) {
             obj.destroy();
-            Luxe.events.fire('marble_captured');
+            Luxe.events.fire('border_collision');
         }
     }
 }

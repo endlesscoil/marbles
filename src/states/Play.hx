@@ -12,6 +12,7 @@ import mint.Image;
 
 import ui.UI;
 import GameState.InputState;
+import GameState.TurnState;
 
 class Play extends State {
     private var canvas : Canvas;
@@ -21,13 +22,15 @@ class Play extends State {
     private var current_mouse_pos : Vector;
     private var launch_down_time : Float = -1;
     private var launch_timeout_timer : snow.api.Timer;
-    private var captured_marbles : Int = 0;
 
     private var _txt_instructions : Label;
     private var txt_instructions : mint.render.luxe.Label;
-    private var _txt_marble_count : Label;
-    private var txt_marble_count : mint.render.luxe.Label;
-    private var _img_marble_count : Image;
+    private var _txt_marble_count1 : Label;
+    private var txt_marble_count1 : mint.render.luxe.Label;
+    private var _img_marble_count1 : Image;
+    private var _txt_marble_count2 : Label;
+    private var txt_marble_count2 : mint.render.luxe.Label;
+    private var _img_marble_count2 : Image;
 
     public override function onenter<T>(_ : T) {
         canvas = UI.canvas;
@@ -37,10 +40,9 @@ class Play extends State {
 
         current_mouse_pos = new Vector(0, 0);
         launch_down_time = -1;
-        captured_marbles = 0;
 
         Luxe.events.listen('input_state_changed', on_input_state_changed);
-        Luxe.events.listen('marble_captured', on_marble_captured);
+        Luxe.events.listen('border_collision', on_border_collision);
 
         GameState.set_input_state(InputState.ChooseLaunchPosition);
 
@@ -141,10 +143,14 @@ class Play extends State {
         shooter.destroy();
         shooter = null;
 
+        var playerTurn = if (GameState.turnState == TurnState.Player1) TurnState.Player2 else TurnState.Player1;
+
+        GameState.turnState = playerTurn;
+        trace('on_launch_timeout: new turnState: ${GameState.turnState}');
         GameState.set_input_state(InputState.ChooseLaunchPosition);
     }
 
-    private function on_marble_captured(e : Dynamic) {
+    private function on_border_collision(e : Dynamic) {
         trace('marble captured');
 
         capture_marble();
@@ -179,7 +185,34 @@ class Play extends State {
 
         txt_instructions = new mint.render.luxe.Label(UI.rendering, _txt_instructions);
 
-        _img_marble_count = new Image({
+        _img_marble_count1 = new Image({
+            x: 5,
+            y: 5,
+            w: 30,
+            h: 30,
+            name: 'image.marble_count',
+            parent: UI.canvas,
+            path: 'assets/marble_count.png'
+        });
+
+        _txt_marble_count1 = new Label({
+            parent: UI.canvas,
+            name: 'text.marble_count',
+            x: 5 + 30,
+            y: 5,
+            align: TextAlign.left,
+            align_vertical: TextAlign.center,
+            text_size: 16,
+            text: '',
+            options: {
+                color: new Color(1, 1, 1, 1)
+            }
+        });
+
+        txt_marble_count1 = new mint.render.luxe.Label(UI.rendering, _txt_marble_count1);
+        txt_marble_count1.text.text = 'x0';
+
+        _img_marble_count2 = new Image({
             x: Luxe.screen.w - 30 - 20 - 5,
             y: 5,
             w: 30,
@@ -189,7 +222,7 @@ class Play extends State {
             path: 'assets/marble_count.png'
         });
 
-        _txt_marble_count = new Label({
+        _txt_marble_count2 = new Label({
             parent: UI.canvas,
             name: 'text.marble_count',
             x: Luxe.screen.w - 20 - 5,
@@ -203,8 +236,8 @@ class Play extends State {
             }
         });
 
-        txt_marble_count = new mint.render.luxe.Label(UI.rendering, _txt_marble_count);
-        txt_marble_count.text.text = 'x0';
+        txt_marble_count2 = new mint.render.luxe.Label(UI.rendering, _txt_marble_count2);
+        txt_marble_count2.text.text = 'x0';
     }
 
     private function inputstate_to_directions(state : InputState) {
@@ -220,8 +253,14 @@ class Play extends State {
     }
 
     private function capture_marble() {
-        captured_marbles++;
+        var player = if (GameState.turnState == TurnState.Player1) 0 else 1;
+        var score = GameState.score_point(player);
 
-        txt_marble_count.text.text = 'x${captured_marbles}';
+        trace('player=${player} score=${score}');
+
+        if (player == 0)
+            txt_marble_count1.text.text = 'x${score}';
+        else
+            txt_marble_count2.text.text = 'x${score}';
     }
 }
