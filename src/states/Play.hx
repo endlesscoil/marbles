@@ -111,17 +111,16 @@ class Play extends State {
             case InputState.ChooseLaunchPosition:
             {
                 if (e.button == luxe.MouseButton.left) {
-                    //shooter.pos = e.pos.clone();
+                    if (board.check_launch_point(e.pos))
+                        trace('NO WAY JOSE!');
+                    else {
+                        create_shooter(e.pos, 10);
+                        shooter.get('shooter').aiming_enabled = true;
 
+                        trace('Created shooter at pos: ${shooter.pos}');
 
-                    create_shooter(e.pos, 10);
-                    shooter.get('shooter').aiming_enabled = true;
-
-                    trace('Created shooter at pos: ${shooter.pos}');
-
-                    //shooter.collider.body.position.setxy(e.pos.x, e.pos.y);
-
-                    GameState.set_input_state(InputState.LaunchMarble);
+                        GameState.set_input_state(InputState.LaunchMarble);
+                    }
                 }
             }
 

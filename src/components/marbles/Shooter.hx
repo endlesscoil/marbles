@@ -28,7 +28,7 @@ class Shooter extends Component {
         power = 500;
         
         Main.debug_draw.remove(marble.collider.body);
-        marble.radius *= 2;
+        //marble.radius *= 2;
         marble.collider.body.gravMass *= 0.5;
         marble.collider.body.shapes.clear();
         marble.collider.body.shapes.add(new Circle(marble.radius));
