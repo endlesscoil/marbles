@@ -25,14 +25,14 @@ class Shooter extends Component {
         marble = cast entity;
 
         // TEMP
-        power = 250;
+        power = 150;
         
-        Main.debug_draw.remove(marble.collider.body);
-        //marble.radius *= 2;
+        //Main.debug_draw.remove(marble.collider.body);
+
         marble.collider.body.gravMass *= 0.5;
         marble.collider.body.shapes.clear();
         marble.collider.body.shapes.add(new Circle(marble.radius));
-        Main.debug_draw.add(marble.collider.body);
+        //Main.debug_draw.add(marble.collider.body);
 
         if (marble.geometry != null)
             marble.geometry.drop(true);
@@ -45,24 +45,19 @@ class Shooter extends Component {
         });
     }
 
-    public override function onremoved() {
-        trace('SHOOTER REMOVED!');
-    }
+    public override function onremoved() { }
 
-    public override function update(dt : Float) {
-
-    }
+    public override function update(dt : Float) { }
 
     public function shoot(target_pos : Vector, launch_power : Float) {
         var direction = get_direction(target_pos);
         var vel = direction.multiplyScalar(launch_power);
 
         marble.collider.body.applyImpulse(new Vec2(vel.x, vel.y));
-        //marble.collider.body.velocity = new Vec2(vel.x, vel.y);
-        //marble.collider.body.angularVel = 10.0;
     }
 
     public function aim(?target_pos : Vector) {
+        // No target?  Destroy the aim reticle.
         if (target_pos == null) {
             if (aim_geometry != null) {
                 aim_geometry.drop(true);
@@ -70,8 +65,10 @@ class Shooter extends Component {
             }
         }
         else {
+            // Adjust position to outside the marble.
             var aim_pos = get_direction(target_pos).multiplyScalar(marble.radius + 5);
 
+            // Draw or update geometry as necessary.
             if (aim_geometry == null) {
                 aim_geometry = Luxe.draw.circle({
                     x: pos.x + aim_pos.x,

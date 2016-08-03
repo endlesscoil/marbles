@@ -16,14 +16,14 @@ import GameState.InputState;
 import GameState.TurnState;
 
 class Play extends State {
-    private var canvas : Canvas;
-
     private var board : Board;
     private var shooter : Marble;
     private var current_mouse_pos : Vector;
-    private var launch_down_time : Float = -1;
+    private var launch_down_time : Float;
     private var launch_timeout_timer : snow.api.Timer;
 
+    // UI crap
+    private var canvas : Canvas;
     private var panel_top : Panel;
     private var panel_bottom : Panel;
     private var panel_notice : Panel;
@@ -56,13 +56,19 @@ class Play extends State {
 
     public override function onleave<T>(_ : T) {
         Luxe.timer.reset();
+        Luxe.screen.cursor.grab = false;
 
         board.destroy();
     }
 
     public override function update(dt : Float) {
-        if (GameState.inputState == InputState.LaunchMarble && shooter != null && shooter.destroyed != true && shooter.get('shooter').aiming_enabled == true)
+        if (GameState.inputState == InputState.LaunchMarble 
+            && shooter != null 
+            && shooter.destroyed != true 
+            && shooter.get('shooter').aiming_enabled == true) 
+        {
             shooter.get('shooter').aim(current_mouse_pos);
+        }
     }
 
     public override function onkeydown(e : luxe.Input.KeyEvent) {
@@ -87,26 +93,27 @@ class Play extends State {
             case InputState.LaunchMarble:
             {
                 if (e.keycode == Key.space) {
+                    // Calculate charge time and launch power.
                     var charge_time = (e.timestamp - launch_down_time);
                     var launch_power = Math.min(charge_time * shooter.get('shooter').power, shooter.get('shooter').power);
 
                     trace('launching!  charge_time=${charge_time}, launch_power=${launch_power}');
                     launch_down_time = -1;
 
+                    // Remove aiming and powerup indicators.
                     shooter.get('shooter').powerup(false);
                     shooter.get('shooter').aiming_enabled = false;
                     shooter.get('shooter').aim(null);
 
+                    // FIRE!!!!
                     shooter.get('shooter').shoot(current_mouse_pos, launch_power);
 
+                    // Schedule turn change.
                     launch_timeout_timer = Luxe.timer.schedule(5, on_launch_timeout);
                 }
             }
 
-            default: {
-                if (e.keycode == Key.key_n)
-                    show_notice('testing', 5);
-            }
+            default: { }
         }
     }
 
@@ -120,9 +127,9 @@ class Play extends State {
             {
                 if (e.button == luxe.MouseButton.left) {
                     if (board.check_launch_point(e.pos))
-                        set_instruction_text('Choose a location outside of the circle!', new Color(1, 0, 0, 1));
+                        set_label_text(txt_instructions, 'Choose a location outside of the circle!', new Color(1, 0, 0, 1));
                     else {
-                        Luxe.screen.cursor.grab = false;  // TODO: make false when not debugging, true otherwise
+                        Luxe.screen.cursor.grab = true;  // TODO: make false when not debugging, true otherwise
                         create_shooter(e.pos, 10);
                         shooter.get('shooter').aiming_enabled = true;
 
@@ -144,24 +151,29 @@ class Play extends State {
     }
 
     private function on_launch_timeout() {
+        // Reset shooter and cursor.
         shooter.destroy();
         shooter = null;
         Luxe.screen.cursor.grab = false;
 
-        for (marble in board.marbles) {
-            marble.stop();
-        }
-
+        // Game over?
         if (board.marbles.length == 0) {
             Main.set_state('game_over');
         }
         else {
+            // Stop all marbles from moving so we don't end up with marbles rolling across the line after
+            // the turn switches.
+            for (marble in board.marbles) {
+                marble.stop();
+            }
+
+            // Determine next player and set game states.
             var playerTurn = if (GameState.turnState == TurnState.Player1) TurnState.Player2 else TurnState.Player1;
 
             GameState.turnState = playerTurn;
-            trace('on_launch_timeout: new turnState: ${GameState.turnState}');
             GameState.set_input_state(InputState.ChooseLaunchPosition);
 
+            // Show turn notice.
             var playerstring = if (playerTurn == TurnState.Player1) "Player 1" else "Player 2";
             show_notice(playerstring + "'s turn!", 3);
         }
@@ -183,6 +195,53 @@ class Play extends State {
             pos: pos.clone()
         });
         shooter.add(new components.marbles.Shooter({ name: 'shooter' }));
+    }
+
+    private function inputstate_to_directions(state : InputState) {
+        switch (state) {
+            case InputState.Idle: set_label_text(txt_instructions, 'derp de derp de derp', new Color(1, 1, 1, 1));
+            case InputState.ChooseLaunchPosition: set_label_text(txt_instructions, "Click the mouse button where you'd like to launch the shooter from.", new Color(1, 1, 1, 1));
+            case InputState.LaunchMarble: set_label_text(txt_instructions, 'Press and hold the space bar to charge your launch and then release it to shoot the marble!', new Color(1, 1, 1, 1));
+        }
+    }
+
+    private function capture_marble() {
+        var player = if (GameState.turnState == TurnState.Player1) 0 else 1;
+        var score = GameState.score_point(player);
+
+        trace('player=${player} score=${score}');
+
+        if (player == 0)
+            set_label_text(txt_marble_count1, 'x${score}');
+        else
+            set_label_text(txt_marble_count2, 'x${score}');
+    }
+
+    private function set_label_text(c : mint.Label, text : String, ?color : Color) {
+        var t = cast(c.renderer, mint.render.luxe.Label);
+
+        t.text.text = text;
+        if (color != null)
+            t.text.color = color;
+    }
+
+    private function show_notice(text : String, ?time : Float) {
+        set_label_text(txt_notice, text);
+
+        // Show panel and children.
+        panel_notice.visible = true;
+        for (child in panel_notice.children)
+            child.visible = true;
+
+        // Schedule a timer to hide the notification.
+        if (time != null)
+            launch_timeout_timer = Luxe.timer.schedule(time, hide_notice);
+    }
+
+    private function hide_notice() {
+        panel_notice.visible = false;
+        for (child in panel_notice.children)
+            child.visible = false;
     }
 
     private function create_ui() {
@@ -300,54 +359,5 @@ class Play extends State {
             },
             visible: false
         });
-    }
-
-    private function inputstate_to_directions(state : InputState) {
-        switch (state) {
-            case InputState.Idle: set_instruction_text('derp de derp de derp', new Color(1, 1, 1, 1));
-            case InputState.ChooseLaunchPosition: set_instruction_text("Click the mouse button where you'd like to launch the shooter from.", new Color(1, 1, 1, 1));
-            case InputState.LaunchMarble: set_instruction_text('Press and hold the space bar to charge your launch and then release it to shoot the marble!', new Color(1, 1, 1, 1));
-        }
-    }
-
-    private function set_instruction_text(text : String, ?color : Color) {
-        var r = cast(txt_instructions.renderer, mint.render.luxe.Label);
-
-        r.text.text = '${text}';
-        if (color != null)
-            r.text.color = color;
-    }
-
-    private function capture_marble() {
-        var player = if (GameState.turnState == TurnState.Player1) 0 else 1;
-        var score = GameState.score_point(player);
-
-        trace('player=${player} score=${score}');
-
-        if (player == 0) {
-            var t = cast(txt_marble_count1.renderer, mint.render.luxe.Label);
-            t.text.text = 'x${score}';
-        }
-        else {
-            var t = cast(txt_marble_count2.renderer, mint.render.luxe.Label);
-            t.text.text = 'x${score}';
-        }
-    }
-
-    private function show_notice(text : String, time : Float) {
-        var lbl = cast(txt_notice.renderer, mint.render.luxe.Label);
-        lbl.text.text = text;
-
-        panel_notice.visible = true;
-        for (child in panel_notice.children)
-            child.visible = true;
-
-        launch_timeout_timer = Luxe.timer.schedule(time, hide_notice);
-    }
-
-    private function hide_notice() {
-        panel_notice.visible = false;
-        for (child in panel_notice.children)
-            child.visible = false;
     }
 }
