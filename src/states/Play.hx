@@ -50,6 +50,8 @@ class Play extends State {
 
         board = new Board();
         board.place_marbles(13);
+
+        show_notice("Player 1's turn!", 3);
     }
 
     public override function onleave<T>(_ : T) {
@@ -149,6 +151,9 @@ class Play extends State {
         GameState.turnState = playerTurn;
         trace('on_launch_timeout: new turnState: ${GameState.turnState}');
         GameState.set_input_state(InputState.ChooseLaunchPosition);
+
+        var playerstring = if (playerTurn == TurnState.Player1) "Player 1" else "Player 2";
+        show_notice(playerstring + "'s turn!", 3);
     }
 
     private function on_border_collision(e : Dynamic) {
@@ -260,9 +265,9 @@ class Play extends State {
         panel_notice = new Panel({
             parent: UI.canvas,
             name: 'panel.notice',
-            x: Luxe.screen.w / 2 - 50,
+            x: Luxe.screen.w / 2 - 100,
             y: Luxe.screen.h / 2 - 30,
-            w: 100,
+            w: 200,
             h: 60,
             options: {
                 color: new Color(0, 0, 0, 0.25)
@@ -273,10 +278,10 @@ class Play extends State {
         txt_notice = new Label({
             parent: panel_notice,
             name: 'text.notice',
-            x: panel_notice.w / 2,
-            y: panel_notice.h / 2,
+            x: panel_notice.w / 2 - 10,
+            y: panel_notice.h / 2 - 10, //panel_notice.h / 2,
             align: TextAlign.center,
-            align_vertical: TextAlign.center,
+            align_vertical: TextAlign.top,
             text_size: 18,
             text: '',
             options: {
