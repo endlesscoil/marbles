@@ -27,16 +27,12 @@ class Play extends State {
     private var panel_top : Panel;
     private var panel_bottom : Panel;
     private var panel_notice : Panel;
-    private var _txt_instructions : Label;
-    private var txt_instructions : mint.render.luxe.Label;
-    private var _txt_marble_count1 : Label;
-    private var txt_marble_count1 : mint.render.luxe.Label;
-    private var _img_marble_count1 : Image;
-    private var _txt_marble_count2 : Label;
-    private var txt_marble_count2 : mint.render.luxe.Label;
-    private var _img_marble_count2 : Image;
-    private var _txt_notice : Label;
-    private var txt_notice : mint.render.luxe.Label;
+    private var txt_instructions : Label;
+    private var txt_marble_count1 : Label;
+    private var img_marble_count1 : Image;
+    private var txt_marble_count2 : Label;
+    private var img_marble_count2 : Image;
+    private var txt_notice : Label;
 
     public override function onenter<T>(_ : T) {
         canvas = UI.canvas;
@@ -111,7 +107,6 @@ class Play extends State {
     }
 
     public override function onmousemove(e : luxe.Input.MouseEvent) {
-        //trace('pos=${e.pos}, rel=${e.x_rel},${e.y_rel}');
         current_mouse_pos = e.pos.clone();
     }
 
@@ -199,7 +194,7 @@ class Play extends State {
             }
         });
 
-        _txt_instructions = new Label({
+        txt_instructions = new Label({
             parent: panel_bottom,
             name: 'text.instructions',
             x: Luxe.screen.w / 2,
@@ -214,9 +209,7 @@ class Play extends State {
             depth: 99  // HACK: this shouldn't be needed, but seems it is.
         });
 
-        txt_instructions = new mint.render.luxe.Label(UI.rendering, _txt_instructions);
-
-        _img_marble_count1 = new Image({
+        img_marble_count1 = new Image({
             x: 5,
             y: 5,
             w: 30,
@@ -226,7 +219,7 @@ class Play extends State {
             path: 'assets/marble_count.png'
         });
 
-        _txt_marble_count1 = new Label({
+        txt_marble_count1 = new Label({
             parent: panel_top,
             name: 'text.marble_count',
             x: 5 + 30,
@@ -234,16 +227,13 @@ class Play extends State {
             align: TextAlign.left,
             align_vertical: TextAlign.center,
             text_size: 16,
-            text: '',
+            text: 'x0',
             options: {
                 color: new Color(1, 1, 1, 1)
             }
         });
 
-        txt_marble_count1 = new mint.render.luxe.Label(UI.rendering, _txt_marble_count1);
-        txt_marble_count1.text.text = 'x0';
-
-        _img_marble_count2 = new Image({
+        img_marble_count2 = new Image({
             x: Luxe.screen.w - 30 - 20 - 5,
             y: 5,
             w: 30,
@@ -253,7 +243,7 @@ class Play extends State {
             path: 'assets/marble_count.png'
         });
 
-        _txt_marble_count2 = new Label({
+        txt_marble_count2 = new Label({
             parent: panel_top,
             name: 'text.marble_count',
             x: Luxe.screen.w - 20 - 5,
@@ -261,14 +251,11 @@ class Play extends State {
             align: TextAlign.left,
             align_vertical: TextAlign.center,
             text_size: 16,
-            text: '',
+            text: 'x0',
             options: {
                 color: new Color(1, 1, 1, 1)
             }
         });
-
-        txt_marble_count2 = new mint.render.luxe.Label(UI.rendering, _txt_marble_count2);
-        txt_marble_count2.text.text = 'x0';
 
         panel_notice = new Panel({
             parent: UI.canvas,
@@ -279,11 +266,11 @@ class Play extends State {
             h: 60,
             options: {
                 color: new Color(0, 0, 0, 0.25)
-            }
+            },
+            visible: false
         });
-        panel_notice.visible = false;
 
-        _txt_notice = new Label({
+        txt_notice = new Label({
             parent: panel_notice,
             name: 'text.notice',
             x: panel_notice.w / 2,
@@ -294,12 +281,9 @@ class Play extends State {
             text: '',
             options: {
                 color: new Color(1, 1, 1, 1)
-            }
+            },
+            visible: false
         });
-
-        //txt_notice = new mint.render.luxe.Label(UI.rendering, _txt_notice);
-        //txt_notice.text.text = 'hi thar';
-        _txt_notice.visible = false;
     }
 
     private function inputstate_to_directions(state : InputState) {
@@ -311,9 +295,11 @@ class Play extends State {
     }
 
     private function set_instruction_text(text : String, ?color : Color) {
-        txt_instructions.text.text = '${text}';
+        var r = cast(txt_instructions.renderer, mint.render.luxe.Label);
+
+        r.text.text = '${text}';
         if (color != null)
-            txt_instructions.text.color = color;
+            r.text.color = color;
     }
 
     private function capture_marble() {
@@ -322,14 +308,18 @@ class Play extends State {
 
         trace('player=${player} score=${score}');
 
-        if (player == 0)
-            txt_marble_count1.text.text = 'x${score}';
-        else
-            txt_marble_count2.text.text = 'x${score}';
+        if (player == 0) {
+            var t = cast(txt_marble_count1.renderer, mint.render.luxe.Label);
+            t.text.text = 'x${score}';
+        }
+        else {
+            var t = cast(txt_marble_count2.renderer, mint.render.luxe.Label);
+            t.text.text = 'x${score}';
+        }
     }
 
     private function show_notice(text : String, time : Float) {
-        var lbl = cast(_txt_notice.renderer, mint.render.luxe.Label);
+        var lbl = cast(txt_notice.renderer, mint.render.luxe.Label);
         lbl.text.text = text;
 
         panel_notice.visible = true;
