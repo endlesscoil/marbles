@@ -98,4 +98,8 @@ class Marble extends Entity {
 
         return pos;
     }
+
+    public function stop() {
+        collider.body.velocity = new nape.geom.Vec2(0, 0);
+    }
 }

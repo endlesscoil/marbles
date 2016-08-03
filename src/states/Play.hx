@@ -146,6 +146,10 @@ class Play extends State {
         shooter = null;
         Luxe.screen.cursor.grab = false;
 
+        for (marble in board.marbles) {
+            marble.stop();
+        }
+
         var playerTurn = if (GameState.turnState == TurnState.Player1) TurnState.Player2 else TurnState.Player1;
 
         GameState.turnState = playerTurn;

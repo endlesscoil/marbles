@@ -102,6 +102,7 @@ class Board extends Entity {
         trace('circle sensor: ${obj}');
 
         if (obj.get('shooter') == null) {
+            marbles.remove(cast obj);
             obj.destroy();
             Luxe.events.fire('border_collision');
         }
