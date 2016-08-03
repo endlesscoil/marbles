@@ -26,6 +26,7 @@ class Play extends State {
 
     private var panel_top : Panel;
     private var panel_bottom : Panel;
+    private var panel_notice : Panel;
     private var _txt_instructions : Label;
     private var txt_instructions : mint.render.luxe.Label;
     private var _txt_marble_count1 : Label;
@@ -34,6 +35,8 @@ class Play extends State {
     private var _txt_marble_count2 : Label;
     private var txt_marble_count2 : mint.render.luxe.Label;
     private var _img_marble_count2 : Image;
+    private var _txt_notice : Label;
+    private var txt_notice : mint.render.luxe.Label;
 
     public override function onenter<T>(_ : T) {
         canvas = UI.canvas;
@@ -100,7 +103,10 @@ class Play extends State {
                 }
             }
 
-            default: {}
+            default: {
+                if (e.keycode == Key.key_n)
+                    show_notice('testing', 5);
+            }
         }
     }
 
@@ -263,6 +269,37 @@ class Play extends State {
 
         txt_marble_count2 = new mint.render.luxe.Label(UI.rendering, _txt_marble_count2);
         txt_marble_count2.text.text = 'x0';
+
+        panel_notice = new Panel({
+            parent: UI.canvas,
+            name: 'panel.notice',
+            x: Luxe.screen.w / 2 - 50,
+            y: Luxe.screen.h / 2 - 30,
+            w: 100,
+            h: 60,
+            options: {
+                color: new Color(0, 0, 0, 0.25)
+            }
+        });
+
+        _txt_notice = new Label({
+            parent: panel_notice,
+            name: 'text.notice',
+            x: panel_notice.w / 2,
+            y: panel_notice.h / 2,
+            align: TextAlign.center,
+            align_vertical: TextAlign.center,
+            text_size: 18,
+            text: '',
+            options: {
+                color: new Color(1, 1, 1, 1)
+            }
+        });
+
+        txt_notice = new mint.render.luxe.Label(UI.rendering, _txt_notice);
+        txt_notice.text.text = 'hi thar';
+
+        panel_notice.visible = false;
     }
 
     private function inputstate_to_directions(state : InputState) {
@@ -289,5 +326,15 @@ class Play extends State {
             txt_marble_count1.text.text = 'x${score}';
         else
             txt_marble_count2.text.text = 'x${score}';
+    }
+
+    private function show_notice(text : String, time : Float) {
+        txt_notice.text.text = text;
+        panel_notice.visible = true;
+
+        launch_timeout_timer = Luxe.timer.schedule(time, function() {
+            var bah = cast(panel_notice.renderer, mint.render.luxe.Panel);
+            panel_notice.visible = false;
+        });
     }
 }
