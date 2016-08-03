@@ -124,6 +124,11 @@ class Board extends Entity {
 
     private function on_circle_sensor(collision : InteractionCallback) {
         var obj : luxe.Entity = collision.int2.userData.obj;
+        if (obj == null || obj.destroyed == true) {
+            trace('Sensor triggered by deleted entity.');
+            return;
+        }
+
         trace('circle sensor: ${obj}');
 
         if (obj.get('shooter') == null) {

@@ -43,6 +43,7 @@ class Marble extends Entity {
 
     public override function destroy(?_from_parent : Bool = false) {
         geometry.drop(true);
+        collider.body.userData.obj = null;
 
         super.destroy(_from_parent);
     }
