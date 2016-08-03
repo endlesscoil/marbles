@@ -34,6 +34,13 @@ class GameOver extends State {
     }
 
     private function create_ui() {
+        var p1score = GameState.marbles_taken[0];
+        var p2score = GameState.marbles_taken[1];
+
+        var victor = "It's a tie game!";
+        if (p1score > p2score) victor = "Player 1 wins!";
+        else if (p2score > p1score) victor = "Player 2 wins!";
+
         _txt_instructions = new mint.Label({
             parent: canvas,
             name: 'instructions.text',
@@ -42,7 +49,7 @@ class GameOver extends State {
             align: TextAlign.center,
             align_vertical: TextAlign.center,
             text_size: 14,
-            text: 'You dead.. press escape to exit.'
+            text: victor
         });
 
         txt_instructions = new mint.render.luxe.Label(UI.rendering, _txt_instructions);
@@ -51,4 +58,3 @@ class GameOver extends State {
         instructions_actuation = Actuate.tween(txt_instructions.color, 3, { a: 1 });
     }
 }
-

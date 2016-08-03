@@ -39,6 +39,11 @@ class Board extends Entity {
 
     }
 
+    public override function destroy(?_from_parent : Bool = false) {
+        Main.debug_draw.remove(border);
+        Main.debug_draw.remove(circle_body);
+    }
+
     private function create_borders() {
         border = new Body(BodyType.STATIC);
 

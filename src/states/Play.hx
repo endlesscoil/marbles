@@ -49,13 +49,15 @@ class Play extends State {
         GameState.set_input_state(InputState.ChooseLaunchPosition);
 
         board = new Board();
-        board.place_marbles(13);
+        board.place_marbles(21);
 
         show_notice("Player 1's turn!", 3);
     }
 
     public override function onleave<T>(_ : T) {
         Luxe.timer.reset();
+
+        board.destroy();
     }
 
     public override function update(dt : Float) {
@@ -150,14 +152,19 @@ class Play extends State {
             marble.stop();
         }
 
-        var playerTurn = if (GameState.turnState == TurnState.Player1) TurnState.Player2 else TurnState.Player1;
+        if (board.marbles.length == 0) {
+            Main.set_state('game_over');
+        }
+        else {
+            var playerTurn = if (GameState.turnState == TurnState.Player1) TurnState.Player2 else TurnState.Player1;
 
-        GameState.turnState = playerTurn;
-        trace('on_launch_timeout: new turnState: ${GameState.turnState}');
-        GameState.set_input_state(InputState.ChooseLaunchPosition);
+            GameState.turnState = playerTurn;
+            trace('on_launch_timeout: new turnState: ${GameState.turnState}');
+            GameState.set_input_state(InputState.ChooseLaunchPosition);
 
-        var playerstring = if (playerTurn == TurnState.Player1) "Player 1" else "Player 2";
-        show_notice(playerstring + "'s turn!", 3);
+            var playerstring = if (playerTurn == TurnState.Player1) "Player 1" else "Player 2";
+            show_notice(playerstring + "'s turn!", 3);
+        }
     }
 
     private function on_border_collision(e : Dynamic) {
