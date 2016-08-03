@@ -281,6 +281,7 @@ class Play extends State {
                 color: new Color(0, 0, 0, 0.25)
             }
         });
+        panel_notice.visible = false;
 
         _txt_notice = new Label({
             parent: panel_notice,
@@ -296,10 +297,9 @@ class Play extends State {
             }
         });
 
-        txt_notice = new mint.render.luxe.Label(UI.rendering, _txt_notice);
-        txt_notice.text.text = 'hi thar';
-
-        panel_notice.visible = false;
+        //txt_notice = new mint.render.luxe.Label(UI.rendering, _txt_notice);
+        //txt_notice.text.text = 'hi thar';
+        _txt_notice.visible = false;
     }
 
     private function inputstate_to_directions(state : InputState) {
@@ -329,12 +329,19 @@ class Play extends State {
     }
 
     private function show_notice(text : String, time : Float) {
-        txt_notice.text.text = text;
-        panel_notice.visible = true;
+        var lbl = cast(_txt_notice.renderer, mint.render.luxe.Label);
+        lbl.text.text = text;
 
-        launch_timeout_timer = Luxe.timer.schedule(time, function() {
-            var bah = cast(panel_notice.renderer, mint.render.luxe.Panel);
-            panel_notice.visible = false;
-        });
+        panel_notice.visible = true;
+        for (child in panel_notice.children)
+            child.visible = true;
+
+        launch_timeout_timer = Luxe.timer.schedule(time, hide_notice);
+    }
+
+    private function hide_notice() {
+        panel_notice.visible = false;
+        for (child in panel_notice.children)
+            child.visible = false;
     }
 }
