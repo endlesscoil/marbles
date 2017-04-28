@@ -6,13 +6,20 @@ import luxe.Sprite;
 import luxe.Vector;
 import luxe.options.EntityOptions;
 import luxe.components.physics.nape.CircleCollider;
-
+import luxe.resource.Resource;
+import snow.types.Types.AudioHandle;
 import phoenix.geometry.CircleGeometry;
 
 import nape.phys.Body;
 import nape.phys.BodyType;
 import nape.shape.Circle;
 import nape.phys.Material;
+
+import nape.callbacks.InteractionListener;
+import nape.callbacks.InteractionCallback;
+import nape.callbacks.CbType;
+import nape.callbacks.CbEvent;
+import nape.callbacks.InteractionType;
 
 import util.Macros.*;
 
@@ -27,10 +34,16 @@ typedef MarbleOptions = {
 class Marble extends Entity {
     public var geometry(default, default) : CircleGeometry;
     public var collider(default, default) : CircleCollider;
-    
+
     public var radius(default, default) : Float = 5;
     public var mass(default, default) : Float = 0;
     public var color(default, default) : Color = new Color(1, 0, 0, 1);
+
+    private var marbleCollisionType : CbType = new CbType();
+    private var marble_collision_listener : InteractionListener;
+
+    private var ballhit : AudioResource;
+    private var ballhit_handle : AudioHandle;
 
     public override function new(?options : MarbleOptions) {
         options = def(options, {});
@@ -49,12 +62,17 @@ class Marble extends Entity {
     }
 
     public override function init() {
+        ballhit = Luxe.resources.audio('assets/ballhit.wav');
+
         geometry = Luxe.draw.circle({
             x: pos.x,
             y: pos.y,
             r: radius,
             color: color
         });
+
+        marble_collision_listener = new InteractionListener(CbEvent.BEGIN, InteractionType.COLLISION, marbleCollisionType, CbType.ANY_BODY, on_collision);
+        Luxe.physics.nape.space.listeners.add(marble_collision_listener);
 
         collider = add(new CircleCollider({
             name: 'body',
@@ -65,6 +83,8 @@ class Marble extends Entity {
         }));
 
         collider.body.gravMass = mass;
+        collider.body.space = Luxe.physics.nape.space;
+        collider.body.cbTypes.add(marbleCollisionType);
 
         var material = Material.glass();
         collider.body.setShapeMaterials(material);
@@ -98,5 +118,13 @@ class Marble extends Entity {
 
     public function stop() {
         collider.body.velocity = new nape.geom.Vec2(0, 0);
+    }
+
+    private function on_collision(collision : InteractionCallback) {
+
+        var intensity = collision.int2.castBody.velocity.length / 20;
+        var volume = Math.min(Math.max(intensity, 0), 10) / 10;
+
+        ballhit_handle = Luxe.audio.play(ballhit.source, volume);
     }
 }

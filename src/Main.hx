@@ -6,7 +6,7 @@ import GameState.InputState;
 
 import luxe.physics.nape.DebugDraw;
 
-class Main extends luxe.Game 
+class Main extends luxe.Game
 {
     public static var ui : UI;
     public static var state : States;
@@ -24,6 +24,8 @@ class Main extends luxe.Game
         config.render.antialiasing = 4;
 
         config.preload.textures.push({ id: 'assets/marble_count.png' });
+        config.preload.sounds.push({ id: 'assets/ballhit.wav', is_stream: false });
+        config.preload.sounds.push({ id: 'assets/chargeup.wav', is_stream: false });
 
         return config;
     }

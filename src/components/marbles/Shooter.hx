@@ -6,7 +6,9 @@ import luxe.Color;
 import luxe.utils.Maths;
 import luxe.tween.Actuate;
 import luxe.tween.actuators.GenericActuator;
+import luxe.resource.Resource;
 
+import snow.types.Types.AudioHandle;
 import phoenix.geometry.CircleGeometry;
 
 import nape.geom.Vec2;
@@ -21,12 +23,16 @@ class Shooter extends Component {
     private var aim_geometry : CircleGeometry = null;
     private var powerup_actuator : IGenericActuator;
 
+    private var chargeup : AudioResource;
+    private var chargeup_handle : AudioHandle;
+
     public override function init() {
         marble = cast entity;
 
         // TEMP
         power = 150;
-        
+        chargeup = Luxe.resources.audio('assets/chargeup.wav');
+
         //Main.debug_draw.remove(marble.collider.body);
 
         marble.collider.body.gravMass *= 0.5;
@@ -79,7 +85,7 @@ class Shooter extends Component {
             }
             else
                 aim_geometry.set(pos.x + aim_pos.x, pos.y + aim_pos.y, 5, 5, 60, 0, 0);     // FIXME: hardcoded radius
-        }   
+        }
     }
 
     private function get_direction(target_pos : Vector) {
@@ -91,9 +97,11 @@ class Shooter extends Component {
             if (aim_geometry == null)
                 return;
 
+            chargeup_handle = Luxe.audio.loop(chargeup.source, 0.5);
             powerup_actuator = Actuate.tween(aim_geometry.color, 0.75, { g: 0.1, b: 0.1 }).reflect().repeat();
         }
         else {
+            Luxe.audio.stop(chargeup_handle);
             Actuate.stop(powerup_actuator);
         }
     }

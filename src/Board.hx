@@ -63,7 +63,7 @@ class Board extends Entity {
         border.space = Luxe.physics.nape.space;
         border.cbTypes.add(wallCollisionType);
         //Main.debug_draw.add(border);
-        
+
         // Create marble circle for use as a listener.
         circle_body = new Body(BodyType.STATIC);
         var circle_shape = new Polygon(Polygon.regular(200, 200, 100));
