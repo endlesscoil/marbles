@@ -7,11 +7,15 @@ import luxe.tween.actuators.GenericActuator;
 
 import mint.types.Types;
 import mint.Canvas;
+import mint.Panel;
+import mint.Image;
 
 import ui.UI;
 
 class Title extends State {
     private var canvas : Canvas;
+
+    private var img_title : Image;
 
     private var txt_instructions : mint.Label;
     private var instructions_actuation : IGenericActuator;
@@ -33,13 +37,21 @@ class Title extends State {
     }
 
     private function create_ui() {
-        // TODO: Add logo, title, etc here.
+        img_title = new Image({
+            x: -25,
+            y: 0,
+            w: 1024,
+            h: 768,
+            name: 'image.marbles_title',
+            parent: canvas,
+            path: 'assets/marbles_title.png'
+        });
 
         txt_instructions = new mint.Label({
             parent: canvas,
             name: 'instructions.text',
-            x: Luxe.screen.w / 2,
-            y: Luxe.screen.h / 2 + 25,
+            x: Luxe.screen.w * 0.5,
+            y: Luxe.screen.h * 0.75 + 25,
             align: TextAlign.center,
             align_vertical: TextAlign.center,
             text_size: 14,

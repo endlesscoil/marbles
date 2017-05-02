@@ -23,6 +23,7 @@ class Main extends luxe.Game
     public override function config(config : luxe.GameConfig) {
         config.render.antialiasing = 4;
 
+        config.preload.textures.push({ id: 'assets/marbles_title.png' });
         config.preload.textures.push({ id: 'assets/marble_count.png' });
         config.preload.sounds.push({ id: 'assets/ballhit.wav', is_stream: false });
         config.preload.sounds.push({ id: 'assets/chargeup.wav', is_stream: false });
