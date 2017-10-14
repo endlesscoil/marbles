@@ -22,7 +22,6 @@ class Play extends State {
     private var launch_down_time : Float;
     private var launch_timeout_timer : snow.api.Timer;
 
-    // UI crap
     private var canvas : Canvas;
     private var panel_top : Panel;
     private var panel_bottom : Panel;
